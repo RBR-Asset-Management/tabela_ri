@@ -1,0 +1,183 @@
+var orderEvents = function (array){
+  return array.sort(function(a, b){
+    return moment.unix(b.event_date) - moment.unix(a.event_date);
+  });
+ }
+
+var mziqChTd = function(yearsField, tables)
+{
+  var THIS = this;
+  this.yearsField = yearsField;
+  this.tables = tables;
+
+  $(yearsField).change(function() {
+    var selectedYear = $(this).val();
+    if (selectedYear == "ANO") return;
+
+    $('#loading').show();
+
+    var reqGetEventosRealizados = {
+      action: 'wpmziq_get_eventos_realizados',
+      year: selectedYear
+    };
+
+    jQuery.post(ajaxurl, reqGetEventosRealizados, function(response) {
+      THIS.clearTables();
+
+      var result = JSON.parse(response);
+      if (result === null) return;
+      THIS.fillTable(THIS.tables[0].tableId, THIS.tables[0].headerId, orderEvents(result));
+
+      $('#loading').hide();
+      $('#no-files').hide();
+      $('#data').show();
+    }); //json post
+  }); //change
+
+  this.clearTables = function()
+  {
+    var tables = this.tables;
+    for (var i = 0; i < tables.length; i++)
+    {
+      var tbId = tables[i].tableId;
+      var headerId = tables[i].headerId;
+      $(tbId + ' > tbody > tr').remove();
+      $(headerId).hide();
+    }
+  };
+
+  this.fillTable = function(tableId, headerId, events)
+  {
+    _.each(events, function(item) {
+      var formatedDate = moment.unix(item.event_date).format(i18nDateFormat);
+      var tds = [
+        '<td>' + formatedDate +'</td>',
+        '<td>'+ item.event_name +'</td>',
+        '<td>'+item.event_place  +'</td>'
+      ]
+      $('<tr>' + tds.join('')).appendTo(tableId);
+    });
+
+    if (typeof events == 'undefined' || events === null) {
+      $(tableId).hide();
+      $(headerId).hide();
+    }
+    else {
+      $(tableId).show();
+      $(headerId).show();
+    }
+  };
+
+  this.init = function()
+  {
+    var requestGetYears = {
+      action: 'wpmziq_get_eventos_realizados_anos'
+    };
+    var yearsField = this.yearsField;
+
+    jQuery.post(ajaxurl, requestGetYears, function(response) {
+      var result = JSON.parse(response);
+      if (result === null) return;
+
+      for (var i = 0, len = result.length; i < len; i++) {
+        $(yearsField).append($('<option>', {
+          value: result[i],
+          text: result[i]
+        }));
+        if (i === 0) {
+          $(yearsField).val(result[i]).trigger('change');
+        }
+      }
+    }); //Jquery Post
+  }
+}
+//oi
+var mziqChTdv2 = function(yearsField, tables)
+{
+  var THIS = this;
+  this.yearsField = yearsField;
+  this.tables = tables;
+
+  $(yearsField).change(function() {
+    var selectedYear = $(this).val();
+    if (selectedYear == "ANO") return;
+
+    $('#loading').show();
+
+    var reqGetEventosRealizados = {
+      action: 'wpmziq_get_eventos_realizados',
+      year: selectedYear
+    };
+
+    jQuery.post(ajaxurlPast, reqGetEventosRealizados, function(response) {
+      THIS.clearTables();
+
+      var result = JSON.parse(response);
+      if (result === null) return;
+      THIS.fillTable(THIS.tables[0].tableId, THIS.tables[0].headerId, result);
+
+      $('#loading').hide();
+      $('#no-files').hide();
+      $('#data').show();
+    }); //json post
+  }); //change
+
+  this.clearTables = function()
+  {
+    var tables = this.tables;
+    for (var i = 0; i < tables.length; i++)
+    {
+      var tbId = tables[i].tableId;
+      var headerId = tables[i].headerId;
+      $(tbId + ' > tbody > tr').remove();
+      $(headerId).hide();
+    }
+  };
+
+  this.fillTable = function(tableId, headerId, events)
+  {
+    
+    _.each(events, function(item) {
+      var formatedDate = moment.unix(item.event_date).format(i18nDateFormat);
+      var tds = [
+        '<td>' + formatedDate +'</td>',
+        '<td>'+ item.event_name +'</td>',
+        '<td>'+item.event_place  +'</td>'
+      ]
+      $('<tr>' + tds.join('')).appendTo(tableId);
+    });
+
+    if (typeof events == 'undefined' || events === null) {
+      $(tableId).hide();
+      $(headerId).hide();
+    }
+    else {
+      $(tableId).show();
+      $(headerId).show();
+    }
+  };
+
+  this.init = function()
+  {
+    var requestGetYears = {
+      action: 'wpmziq_get_eventos_realizados_anos'
+    };
+    var yearsField = this.yearsField;
+
+    jQuery.post(ajaxurlPast, requestGetYears, function(response) {
+      var result = JSON.parse(response);
+      if (result === null) return;
+
+      for (var i = 0, len = result.length; i < len; i++) {
+        $(yearsField).append($('<option>', {
+          value: result[i],
+          text: result[i]
+        }));
+        if (i === 0) {
+          $(yearsField).val(result[i]).trigger('change');
+        }
+      }
+    }); //Jquery Post
+  }
+}
+

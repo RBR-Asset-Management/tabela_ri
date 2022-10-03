@@ -1,0 +1,308 @@
+var $ = jQuery.noConflict();
+$(document).ready(function () {
+   
+    // Home - Banner
+    $('.js-trigger-banner').slick({
+        arrows: false,
+        dots: false,
+        fade: true,
+        infinite: true,
+        autoplay: true,
+        autoplaySpeed: 7000,
+    });
+    // Home - Highlights
+    $('.js-trigger-highlights').slick({
+        dots: false,
+        arrows: false,
+        infinite: true,
+        speed: 650,
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 4000,
+        responsive: [
+          {
+            breakpoint: 1024,
+            settings: {
+              slidesToShow: 3,
+              slidesToScroll: 1,
+              infinite: true,
+              dots: false,
+              arrows: true
+            }
+          },
+          {
+            breakpoint: 767,
+            settings: {
+              slidesToShow: 2,
+              slidesToScroll: 1,
+              dots: false,
+              arrows: true
+            }
+          },
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              dots: false,
+              arrows: true
+            }
+          }
+        ]
+    });
+     // Home - Results Center
+     $('.js-trigger-results').slick({
+        arrows: true,
+        dots: false,
+        fade: true,
+        infinite: true,
+    });
+
+    // Mobile menu
+    $("header nav .primary-menu, header nav .fund-menu").append('<div class="closeMenu js-trigger-menuClose"> <div></div> <div></div> </div>');
+    $(".js-trigger-menu").click(function () {
+        $(".js-target-menu").toggleClass("active");
+    });
+    $(".js-trigger-menuClose").click(function () {
+        $(".js-target-menu").toggleClass("active");
+    });
+
+    // Popup search
+    $(function () {
+        $('.js-target-search').hide();
+        $('.js-trigger-searchModal').on('click', function(){
+            $('.js-target-search').slideToggle(200);
+            $(".js-target-search input").focus();
+        });
+        $(document).keyup(function(e) {
+            if (e.keyCode == 27) {
+                $('.js-call-closeSearchModal').click();
+                setTimeout(function(){
+                $('.searchModal input').val("");
+                }, 500)
+            }
+        });
+    })
+
+    // Accordion
+    if ($(".accordion__item__header").length > 0) {
+        var hHeight = $('.header').innerHeight();
+        $(".accordion__item__header").click(function () {
+            $(this).toggleClass("active");
+            $(this).parent('div').toggleClass('active');
+            $(this).next("div").slideToggle(200);
+        });
+    }
+
+    // Modal Mailer
+    $(".open-modal-mailer").click(function(e) {
+        e.preventDefault();
+        $("#modal").toggleClass("active");
+    });
+    $(".close-modal-mailer").click(function() {
+        $("#modal").toggleClass("active");
+    });
+
+    // Remove o # dos menus principais
+    $(".menu-item-has-children").children("a").attr("href", "javascript:void(0)");
+
+    // HOME - Cotações
+    if (document.querySelector(".fundQuotations")) {
+        // COTAÇÕES
+        var MZStockInfo = new MZIQ_StockInfo();
+        var langCodeFormatted = lang.split("-")[0];
+        var decimalConfig = {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        };
+        var decimalConfigVol = {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        };
+
+        var options = {
+            language: langCodeFormatted,
+            stockinfoId: stockInfoId,
+            template: {
+                type: "raw"
+            },
+            rawInit: function (data) {
+                var tickers = data.tickers.concat(data.indexes);
+                console.log(tickers)
+                var fund1 = tickers[3];
+                var fund2 = tickers[5];
+                var fund3 = tickers[2];
+                var fund4 = tickers[0];
+                var fund5 = tickers[1];
+                var fund6 = tickers[6];
+                var fund8 = tickers[4];
+                var ibov = tickers[7];
+                var ifix = tickers[8];
+        
+
+                var $stockSection = $(".fundQuotations");
+                
+                //console.log('ticker1: '+fund1.ticker+ ' ticker2: '+fund2.ticker+' ticker3: '+fund3.ticker+ ' ticker4: '+fund4.ticker+ ' ticker5: '+fund5.ticker)
+                console.log('ibov '+ ibov.ticker);
+                console.log(tickers);
+                console.log(ifix.ticker);
+
+                 // RBRR11
+                $stockSection.find(".fund1 .ticker").html(fund1.ticker);
+                $stockSection.find(".fund1 .price").html("R$ " + fund1.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund1 .variation").html(fund1.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund1.info.var > 0) {
+                    $stockSection.find(".fund1 .variation").addClass("up");
+                } else if (fund1.info.var < 0) {
+                    $stockSection.find(".fund1 .variation").addClass("down");
+                }
+
+                // RBRY11
+                $stockSection.find(".fund2 .ticker").html(fund2.ticker);
+                $stockSection.find(".fund2 .price").html("R$ " + fund2.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund2 .variation").html(fund2.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund2.info.var > 0) {
+                    $stockSection.find(".fund2 .variation").addClass("up");
+                } else if (fund2.info.var < 0) {
+                    $stockSection.find(".fund2 .variation").addClass("down");
+                }
+                // RBRP11
+                $stockSection.find(".fund3 .ticker").html(fund3.ticker);
+                $stockSection.find(".fund3 .price").html("R$ " + fund3.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund3 .variation").html(fund3.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund3.info.var > 0) {
+                    $stockSection.find(".fund3 .variation").addClass("up");
+                } else if (fund3.info.var < 0) {
+                    $stockSection.find(".fund3 .variation").addClass("down");
+                }
+                // RBRF11
+                $stockSection.find(".fund4 .ticker").html(fund4.ticker);
+                $stockSection.find(".fund4 .price").html("R$ " + fund4.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund4 .variation").html(fund4.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund4.info.var > 0) {
+                    $stockSection.find(".fund4 .variation").addClass("up");
+                } else if (fund4.info.var < 0) {
+                    $stockSection.find(".fund4 .variation").addClass("down");
+                }
+                // RBRL11
+                $stockSection.find(".fund5 .ticker").html(fund5.ticker);
+                $stockSection.find(".fund5 .price").html("R$ " + fund5.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund5 .variation").html(fund5.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund5.info.var > 0) {
+                    $stockSection.find(".fund5 .variation").addClass("up");
+                } else if (fund5.info.var < 0) {
+                    $stockSection.find(".fund5 .variation").addClass("down");
+                }
+                // RPRI11
+                $stockSection.find(".fund6 .ticker").html(fund6.ticker);
+                $stockSection.find(".fund6 .price").html("R$ " + fund6.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund6 .variation").html(fund6.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund6.info.var > 0) {
+                    $stockSection.find(".fund6 .variation").addClass("up");
+                } else if (fund6.info.var < 0) {
+                    $stockSection.find(".fund6 .variation").addClass("down");
+                }
+                // RBRX11
+                $stockSection.find(".fund8 .ticker, .fund7 .ticker").html(fund8.ticker);
+                $stockSection.find(".fund8 .price, .fund7 .price").html("R$ " + fund8.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".fund8 .variation, .fund7 .variation").html(fund8.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (fund8.info.var > 0) {
+                    $stockSection.find(".fund8 .variation, .fund7 .variation").addClass("up");
+                } else if (fund8.info.var < 0) {
+                    $stockSection.find(".fund8 .variation, .fund7 .variation").addClass("down");
+                }
+
+                // IBOV
+                $stockSection.find(".ibov .ticker").html(ibov.ticker);
+                $stockSection.find(".ibov .price").html(ibov.info.price.toLocaleString(lang, decimalConfig));
+                $stockSection.find(".ibov .variation").html(ibov.info.var.toLocaleString(lang, decimalConfig) + "%");
+                if (ibov.info.var > 0) {
+                    $stockSection.find(".ibov .variation").addClass("up");
+                } else if (ibov.info.var < 0)  {
+                    $stockSection.find(".ibov .variation").addClass("down");
+                }
+
+                 // IFIX
+                 $stockSection.find(".ifix .ticker").html(ifix.ticker);
+                 $stockSection.find(".ifix .price").html(ifix.info.price.toLocaleString(lang, decimalConfig));
+                 $stockSection.find(".ifix .variation").html(ifix.info.var.toLocaleString(lang, decimalConfig) + "%");
+                 if (ibov.info.var > 0) {
+                     $stockSection.find(".ifix .variation").addClass("up");
+                 } else if (ibov.info.var < 0)  {
+                     $stockSection.find(".ifix .variation").addClass("down");
+                 }
+            }
+        };
+        MZStockInfo.initialize(options);
+    }
+
+    //go top
+    $(".goTop").on("click", function() {
+        $('html, body').animate({
+            scrollTop: 0
+        }, 'slow');
+    });
+
+    if (!$("body").hasClass("home"))
+    $("body").addClass("interna");
+
+    //Body screen height
+    var wHeight = jQuery(window).height();
+    var hHeight = $('.header').innerHeight();
+    var fHeight = $('.footer').innerHeight();
+    
+    if ($('body').hasClass('logged-in')) {
+        if ($(window).width() < 767) {
+            $('.js-trigger-windowHeight').css('height', parseFloat(wHeight - fHeight));
+        } else {
+            $('.js-trigger-windowHeight').css('height', parseFloat(wHeight - fHeight - 32));
+        }
+    } else {
+        $('.js-trigger-windowHeight').css('height', parseFloat(wHeight - fHeight));
+    }
+    $('body').css('min-height', wHeight);
+    $('body').css('padding-bottom', fHeight);
+    $('main').css('padding-top', hHeight);
+    jQuery(window).resize(function(){
+        var wHeight = $(window).innerHeight();
+        var hHeight = $('.header').innerHeight();
+        var fHeight = $('.footer').innerHeight();
+        if ($('body').hasClass('logged-in')) {
+            if ($(window).width() < 767) {
+                $('.js-trigger-windowHeight').css('height', parseFloat(wHeight - fHeight));
+            } else {
+                $('.js-trigger-windowHeight').css('height', parseFloat(wHeight - fHeight - 32));
+            }
+        } else {
+            $('.js-trigger-windowHeight').css('height', parseFloat(wHeight - fHeight));
+        }
+        $('body').css('min-height', wHeight);
+        $('body').css('padding-bottom', fHeight);
+        $('main').css('padding-top', hHeight);
+    });
+
+    // $(window).on("scroll",function(){
+    //     $('.header').toggleClass('header--fixed',$(document).scrollTop()>25);
+    // });
+
+    //Sitemap
+    $('.js-target-sitemap').hide();
+    $(".js-trigger-sitemap").on('click', function(){
+        $('.js-target-sitemap').slideToggle(200);
+    });
+
+    $('.js-close-sitemap').on('click', function(){
+        $('.js-target-sitemap').slideToggle(200);
+    });
+
+    // Wrap table on overflow
+    $('.wpContent table').wrap('<div class="table-responsive"/>')
+
+    // CURRICULOS
+    $(".curriculo").hide();
+    $(".curriculoItem").on("click", function () {
+        $(this).toggleClass('active');
+        $(this).parents("tr").next('.curriculo:first').toggle();
+    });
+});

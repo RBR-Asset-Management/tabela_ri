@@ -1,0 +1,102 @@
+function formatEventTooltip(item)
+{
+  var arr = item.split('¨');
+  if ($("html").hasClass("en")){
+    var ul = '<h5>Events</h5><ul>';
+  }
+  else{
+    var ul = '<h5>Lista de Eventos</h5><ul>';
+  }
+  for (i = 0; i < arr.length; i++) {
+    if (arr[i] == '') continue;
+    ul += '<li>' + arr[i] + '</li>';
+  }
+  ul += '</ul>';
+  return ul;
+}
+
+function groupEvents(eventos)
+{
+
+  var i = 0;
+  eventos = _.groupBy(eventos, function(x) {
+    //return new Date(Date.parse(x.data)) --> IE ERROR?! SUCKS
+    var dt = moment(x.data, 'MM/DD/YYYY')
+    return dt.toDate();
+  });
+  var groupedEvents = [];
+
+  _.each(eventos, function(v)
+  {
+    var newEvent = {
+      data: '',
+      descricao: ''
+    };
+
+    for (var j = 0; j < v.length; j++)
+    {
+      newEvent.data = moment(v[j].data, 'MM/DD/YYYY').toDate();
+      newEvent.type = v[j].type;
+      newEvent.descricao += v[j].descricao + '¨';
+    }
+
+    if (v.length > 1)
+    {
+      newEvent.type = 'mais-de-um-evento';
+    }
+    newEvent.descricao.slice(0, -1);
+    groupedEvents.push(newEvent);
+  });
+
+  return groupedEvents;
+}
+
+function onBeforeShowDay(date) {
+
+  for (var i = 0; i < groupedEvents.length; i++) {
+    if (groupedEvents[i].data - date === 0) {
+      return [false, 'has-event ' + groupedEvents[i].type, formatEventTooltip(groupedEvents[i].descricao)];
+    }
+  }
+  return [false, '', ''];
+}
+
+var toolTipConfig = {
+  items: "td[title]",
+  position: {
+    my: "center bottom-20",
+    at: "center top",
+    using: function(position, feedback) {
+      $(this).css(position);
+      $("<div>")
+        .addClass("arrow")
+        .addClass(feedback.vertical)
+        .addClass(feedback.horizontal)
+        .appendTo(this);
+    }
+  },
+  delay: 4000,
+  effect: 'slide',
+  content: function() {
+    var element = $(this);
+    if (element.is("td[title]")) {
+      // console.log('element : ' + element.html());
+      var ret = element.attr('title');
+      if (ret == '')
+      {
+        return element;
+      }
+      else {
+        return '<div>' + ret + '</div>';
+      }
+    }
+    else {
+      console.log('NOT!');
+    }
+  }
+};
+
+function onSelectDate(dateText, inst)
+{
+  //TODO: Implement if date filter is requested, otherwise remove it
+};
